@@ -71,12 +71,22 @@ module "alb" {
 
 
   listeners = {
-    {
-      port               = 80
-      protocol           = "HTTP"
+    ex-tcp-udp = {
+      port     = 80
+      protocol = "TCP_UDP"
+      forward = {
+        target_group_key = "ex-target"
+      }
+    }
+
+  target_groups = {
+    ex-target = {
+      name_prefix = "pref-"
+      protocol    = "TCP"
+      port        = 80
+      target_type = "ip"
     }
   }
-
 
   tags = {
     Environment = "Development"
