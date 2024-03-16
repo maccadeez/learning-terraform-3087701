@@ -21,7 +21,7 @@ data "aws_vpc" "default" {
 module "blog_vpc" {
   source = "terraform-aws-modules/vpc/aws"
   
-  name   = "dev"
+  name   = var.environment.name
   cidr   = "${var.environment.network_prefix}.0.0/16"
 
   azs             = ["us-west-2a", "us-west-2b", "us-west-2c"]
@@ -87,7 +87,7 @@ module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "5.1.2"
 
-  name = "${var.environment.name}-blog"
+  name = "${var.environment.name}-blog-sg"
   vpc_id = module.blog_vpc.vpc_id
 
   ingress_rules       = ["http-80-tcp","https-443-tcp"]
@@ -97,7 +97,7 @@ module "blog_sg" {
 }
 
 resource "aws_security_group" "blog" {
-  name = "blog"
+  name = "${var.environment.name}-blog-sg"
   description = "Allow http and https in. Allow everything out"
 
   vpc_id = data.aws_vpc.default.id
